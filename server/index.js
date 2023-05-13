@@ -13,13 +13,23 @@ app.use(logger("dev"));
 app.use("/", express.static("client"));
 
 // TODO #4: Implement the /wordScore endpoint
-
+app.post("/wordScore", (req, res) => {
+  res.status(200).json({ status: "success" });
+});
 // TODO #5: Implement the /highestWordScores endpoint
-
+app.post("/highestWordScores", (req, res) => {
+  const highestWord = database.top10WordScores();
+  res.status(200).json([highestWord]);
+});
 // TODO #6: Implement the /gameScore endpoint
-
+app.post("/gameScore", (req, res) => {
+  res.status(200).json({ status: "success" });
+});
 // TODO #7: Implement the /highestGameScores endpoint
-
+app.post("/highestGameScores", (req, res) => {
+  const highestGame = database.top10GameScores();
+  res.status(200).json([highestGame]);
+});
 // EVERYTHING BELOW THIS WILL WORK AFTER YOU IMPLEMENT THE ABOVE
 
 // This matches all routes that are not defined.
