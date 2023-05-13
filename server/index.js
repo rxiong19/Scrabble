@@ -14,15 +14,19 @@ app.use("/", express.static("client"));
 
 // TODO #4: Implement the /wordScore endpoint
 app.post("/wordScore", (req, res) => {
+  const entry = req.body;
+  database.saveWordScore(entry["name"], entry["word"], entry["score"]);
   res.status(200).json({ status: "success" });
 });
 // TODO #5: Implement the /highestWordScores endpoint
-app.post("/highestWordScores", (req, res) => {
-  const highestWord = database.top10WordScores();
-  res.status(200).json([highestWord]);
+app.post("/highestWordScores", async (req, res) => {
+  const highestWord = await database.top10WordScores();
+  res.status(200).json(highestWord);
 });
 // TODO #6: Implement the /gameScore endpoint
 app.post("/gameScore", (req, res) => {
+  const entry = req.body;
+  database.saveGameScore(entry["name"], entry["score"]);
   res.status(200).json({ status: "success" });
 });
 // TODO #7: Implement the /highestGameScores endpoint
