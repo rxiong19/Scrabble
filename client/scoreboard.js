@@ -10,6 +10,7 @@ class WordScoreBoard {
       word: word,
       score: score,
     };
+    this.words.push(entry);
     await fetch("/wordScore", {
       method: "POST",
       body: JSON.stringify(entry),
@@ -68,6 +69,7 @@ class GameScoreBoard {
       name: name,
       score: score,
     };
+    this.game.push(entry);
     await fetch("/gameScore", {
       method: "POST",
       body: JSON.stringify(entry),

@@ -30,8 +30,8 @@ app.post("/gameScore", (req, res) => {
   res.status(200).json({ status: "success" });
 });
 // TODO #7: Implement the /highestGameScores endpoint
-app.post("/highestGameScores", (req, res) => {
-  const highestGame = database.top10GameScores();
+app.post("/highestGameScores", async (req, res) => {
+  const highestGame = await database.top10GameScores();
   res.status(200).json([highestGame]);
 });
 // EVERYTHING BELOW THIS WILL WORK AFTER YOU IMPLEMENT THE ABOVE
