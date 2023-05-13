@@ -4,11 +4,30 @@ class WordScoreBoard {
   }
 
   // TODO #8: Save the word score to the server
-  async saveWordScore(name, word, score) {}
+  async saveWordScore(name, word, score) {
+    const entry = {
+      name: name,
+      word: word,
+      score: score,
+    };
+    await fetch("/wordScore", {
+      method: "POST",
+      body: JSON.stringify(entry),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.ok) {
+        console.log("Word score saved!");
+      } else {
+        console.error("word score not saved:", res.statusText);
+      }
+    });
+  }
 
   render(element) {
-    let html = '<h1>Word Scores</h1>';
-    html += '<table>';
+    let html = "<h1>Word Scores</h1>";
+    html += "<table>";
     this.words.forEach((word) => {
       html += `
         <tr>
@@ -18,7 +37,7 @@ class WordScoreBoard {
         </tr>
       `;
     });
-    html += '</table>';
+    html += "</table>";
     element.innerHTML = html;
   }
 }
@@ -29,8 +48,8 @@ class GameScoreBoard {
   }
 
   render(element) {
-    let html = '<h1>Game Score</h1>';
-    html += '<table>';
+    let html = "<h1>Game Score</h1>";
+    html += "<table>";
     this.game.forEach((word) => {
       html += `
         <tr>
@@ -39,7 +58,7 @@ class GameScoreBoard {
         </tr>
       `;
     });
-    html += '</table>';
+    html += "</table>";
     element.innerHTML = html;
   }
 
