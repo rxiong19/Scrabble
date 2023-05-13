@@ -1,25 +1,26 @@
-import { Game } from './game.js';
-import { multiPlayerView, getPlayerName } from './multiplayer.js';
-import { Rack } from './rack.js';
-import * as utils from './scrabbleUtils.js';
+import { Game } from "./game.js";
+import { multiPlayerView, getPlayerName } from "./multiplayer.js";
+import { Rack } from "./rack.js";
+import * as utils from "./scrabbleUtils.js";
 import {
   wordScoreBoard,
   gameScoreBoard,
   topWordAndGameScoreBoard,
-} from './scoreboard.js';
+} from "./scoreboard.js";
 
 // UI Components
 //  - We grab the DOM elements we need to work with to make our code cleaner.
-const boardGridElement = document.getElementById('board');
-const playersElement = document.getElementById('players');
-const wordElement = document.getElementById('word');
-const xElement = document.getElementById('x');
-const yElement = document.getElementById('y');
-const directionElement = document.getElementById('direction');
-const playButtonElement = document.getElementById('play');
-const resetButtonElement = document.getElementById('reset');
-const helpButtonElement = document.getElementById('help');
-const hintElement = document.getElementById('hint');
+const boardGridElement = document.getElementById("board");
+const playersElement = document.getElementById("players");
+const wordElement = document.getElementById("word");
+const xElement = document.getElementById("x");
+const yElement = document.getElementById("y");
+const directionElement = document.getElementById("direction");
+const playButtonElement = document.getElementById("play");
+const resetButtonElement = document.getElementById("reset");
+const helpButtonElement = document.getElementById("help");
+const hintElement = document.getElementById("hint");
+const endElement = document.getElementById("end");
 
 // Useful constants
 const TILE_COUNT = 7;
@@ -61,12 +62,12 @@ let turn = 0;
 multiPlayerView(playersElement, racks, turn);
 
 // This is what happens when we click the play button.
-playButtonElement.addEventListener('click', () => {
+playButtonElement.addEventListener("click", () => {
   // Get the values from the UI elements.
   const word = wordElement.value;
   const x = parseInt(xElement.value);
   const y = parseInt(yElement.value);
-  const direction = directionElement.value === 'horizontal';
+  const direction = directionElement.value === "horizontal";
 
   // Used to record the score of the current move.
   let score = 0;
@@ -90,7 +91,7 @@ playButtonElement.addEventListener('click', () => {
 
   // Determines if a play of the word w with direction d is successful.
   const playFails = (w, d) => {
-    const rw = utils.constructWord(tiles, w).join('');
+    const rw = utils.constructWord(tiles, w).join("");
     return playAt(rw, { x, y }, d) === -1;
   };
 
@@ -114,21 +115,21 @@ playButtonElement.addEventListener('click', () => {
 
     // Save and display the word score.
     // TODO #12: Save the word score and render it to the UI
-
+    wordScoreBoard.saveWordScore(getPlayerName(turn), word, score);
     // Update the UI for the next player and rerender the players.
     turn = nextTurn();
     multiPlayerView(playersElement, racks, turn);
 
     // Clear out UI elements for the next play.
-    wordElement.value = '';
-    xElement.value = '';
-    yElement.value = '';
-    hintElement.innerHTML = '';
+    wordElement.value = "";
+    xElement.value = "";
+    yElement.value = "";
+    hintElement.innerHTML = "";
   }
 });
 
 // This is what happens when we click the reset button.
-resetButtonElement.addEventListener('click', () => {
+resetButtonElement.addEventListener("click", () => {
   // Reset the game board.
   game.reset();
   game.render(boardGridElement);
@@ -146,14 +147,20 @@ resetButtonElement.addEventListener('click', () => {
 });
 
 // This is what happens when we click the help button.
-helpButtonElement.addEventListener('click', () => {
+helpButtonElement.addEventListener("click", () => {
   const tiles = racks[turn].getAvailableTiles();
   const possibilities = utils.bestPossibleWords(tiles);
   const hint =
     possibilities.length === 0
-      ? 'no words!'
+      ? "no words!"
       : possibilities[Math.floor(Math.random() * possibilities.length)];
   hintElement.innerText = hint;
 });
 
 // TODO #13: Handle a click event when "End" button is clicked
+endElement.addEventListener("click", () => {
+  const wordScoreboardElement = document.getElementById("word-score-board");
+  wordScoreBoard.render(wordScoreboardElement);
+  const gameScoreboardElement = document.getElementById("top-10-score-board");
+  gameScoreBoard.render(gameScoreboardElement);
+});
