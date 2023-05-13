@@ -7,6 +7,10 @@ import logger from "morgan";
 const app = express();
 const port = process.env.PORT || 3000;
 // TODO #3: Add middleware to the Express app.
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(logger("dev"));
+app.use("/", express.static("client"));
 
 // TODO #4: Implement the /wordScore endpoint
 
