@@ -116,6 +116,9 @@ playButtonElement.addEventListener("click", () => {
     // Save and display the word score.
     // TODO #12: Save the word score and render it to the UI
     wordScoreBoard.saveWordScore(getPlayerName(turn), word, score);
+    const wordScoreboardElement = document.getElementById("word-score-board");
+    wordScoreBoard.render(wordScoreboardElement);
+
     // Update the UI for the next player and rerender the players.
     turn = nextTurn();
     multiPlayerView(playersElement, racks, turn);
@@ -159,8 +162,15 @@ helpButtonElement.addEventListener("click", () => {
 
 // TODO #13: Handle a click event when "End" button is clicked
 endElement.addEventListener("click", () => {
-  const wordScoreboardElement = document.getElementById("word-score-board");
-  wordScoreBoard.render(wordScoreboardElement);
   const gameScoreboardElement = document.getElementById("top-10-score-board");
-  gameScoreBoard.render(gameScoreboardElement);
+  console.log(scores);
+  for (let i = 0; i < NUMBER_OF_PLAYERS; i++) {
+    let score = scores[i];
+    let name = getPlayerName(i);
+    gameScoreBoard.saveGameScore(name, score);
+    scores[i] = 0;
+  }
+
+  //gameScoreBoard.saveGameScore(getPlayerName(turn), score);
+  topWordAndGameScoreBoard.render(gameScoreboardElement);
 });

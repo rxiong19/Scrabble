@@ -26,6 +26,7 @@ app.post("/highestWordScores", async (req, res) => {
 // TODO #6: Implement the /gameScore endpoint
 app.post("/gameScore", (req, res) => {
   const entry = req.body;
+  console.log(entry);
   database.saveGameScore(entry["name"], entry["score"]);
   res.status(200).json({ status: "success" });
 });

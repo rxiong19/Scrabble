@@ -87,13 +87,45 @@ class GameScoreBoard {
 }
 
 class TopWordAndGameScoreBoard {
+  constructor(wordScoreBoard, gameScoreBoard) {
+    this.words = wordScoreBoard.words;
+    this.game = gameScoreBoard.game;
+  }
+
   // TODO #10: Render the top word and game scores
   async render(element) {
-    WordScoreBoard.render(element);
-    GameScoreBoard.render(element);
+    let html = "<h1>Top 10 Word Scores</h1>";
+    html += "<table>";
+    this.words.sort((a, b) => b.score - a.score);
+    this.words.slice(0, 10).forEach((word) => {
+      html += `
+        <tr>
+          <td>${word.name}</td>
+          <td>${word.word}</td>
+          <td>${word.score}</td>
+        </tr>
+      `;
+    });
+    html += "</table>";
+    html += "<h1>Top 10 Game Scores</h1>";
+    html += "<table>";
+    this.game.sort((a, b) => b.score - a.score);
+    this.game.slice(0, 10).forEach((word) => {
+      html += `
+        <tr>
+          <td>${word.name}</td>
+          <td>${word.score}</td>
+        </tr>
+      `;
+    });
+    html += "</table>";
+    element.innerHTML = html;
   }
 }
 
 export const wordScoreBoard = new WordScoreBoard();
 export const gameScoreBoard = new GameScoreBoard();
-export const topWordAndGameScoreBoard = new TopWordAndGameScoreBoard();
+export const topWordAndGameScoreBoard = new TopWordAndGameScoreBoard(
+  wordScoreBoard,
+  gameScoreBoard
+);

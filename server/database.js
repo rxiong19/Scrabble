@@ -1,9 +1,9 @@
-import { readFile, writeFile } from 'fs/promises';
+import { readFile, writeFile } from "fs/promises";
 
 /** A class representing a database to store scores */
 class Database {
   constructor() {
-    this.path = 'scores.json';
+    this.path = "scores.json";
   }
 
   /**
@@ -34,6 +34,7 @@ class Database {
   async saveGameScore(name, score) {
     const data = await this._read();
     data.game.push({ name, score });
+    console.log(data);
     await this._write(data);
   }
 
@@ -70,7 +71,7 @@ class Database {
 
   async _read() {
     try {
-      const data = await readFile(this.path, 'utf8');
+      const data = await readFile(this.path, "utf8");
       return JSON.parse(data);
     } catch (error) {
       return { word: [], game: [] };
@@ -79,7 +80,7 @@ class Database {
 
   // This is a private methods. The # prefix means that they are private.
   async _write(data) {
-    await writeFile(this.path, JSON.stringify(data), 'utf8');
+    await writeFile(this.path, JSON.stringify(data), "utf8");
   }
 }
 
