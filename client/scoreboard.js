@@ -63,12 +63,33 @@ class GameScoreBoard {
   }
 
   // TODO #9: Save the game score to the server
-  async saveGameScore(name, score) {}
+  async saveGameScore(name, score) {
+    const entry = {
+      name: name,
+      score: score,
+    };
+    await fetch("/gameScore", {
+      method: "POST",
+      body: JSON.stringify(entry),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => {
+      if (res.ok) {
+        console.log("Game score saved!");
+      } else {
+        console.error("Game score not saved:", res.statusText);
+      }
+    });
+  }
 }
 
 class TopWordAndGameScoreBoard {
   // TODO #10: Render the top word and game scores
-  async render(element) {}
+  async render(element) {
+    WordScoreBoard.render(element);
+    GameScoreBoard.render(element);
+  }
 }
 
 export const wordScoreBoard = new WordScoreBoard();
