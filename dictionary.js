@@ -1,4 +1,4 @@
-[
+const dictionary = [
   "aa",
   "aah",
   "aahed",
@@ -51947,4 +51947,6 @@
   "zymotic",
   "zymurgy",
   "zyzzyva"
-]
+];
+
+export { dictionary };

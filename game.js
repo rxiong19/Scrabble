@@ -1,43 +1,24 @@
 import { scoring } from "./scoring.js";
-
-function shuffle(array) {
-  // Fisher-Yates shuffle, used for random decoder cipher below
-  let m = array.length;
-
-  // While there remain elements to shuffle…
-  while (m) {
-    // Pick a remaining element…
-    let i = Math.floor(Math.random() * m--);
-
-    // And swap it with the current element.
-    let t = array[m];
-    array[m] = array[i];
-    array[i] = t;
-  }
-
-  return array;
-}
+import { isValid } from "./scrabbleUtils.js";
 
 export class Game {
-  constructor() {
-    if (
-      window.localStorage.getItem("grid") !== null &&
-      window.localStorage.getItem("bag") !== null &&
-      window.localStorage.getItem("playerturn") !== null
-    ) {
-      this.grid = JSON.parse(window.localStorage.getItem("grid"));
-      this.bag = JSON.parse(window.localStorage.getItem("bag"));
-      this.playerturn = JSON.parse(window.localStorage.getItem("playerturn"));
-    } else {
-      this.reset();
-    }
-  }
+  shuffle(array) {
+    // Fisher-Yates shuffle, used for random decoder cipher below
+    let m = array.length;
 
-  /**
-   * This function will reset the game to the default state.
-   * It will NOT update visually, hence render should be called after resetting.
-   */
-  reset() {
+    // While there remain elements to shuffle…
+    while (m) {
+      // Pick a remaining element…
+      let i = Math.floor(Math.random() * m--);
+
+      // And swap it with the current element.
+      let t = array[m];
+      array[m] = array[i];
+      array[i] = t;
+    }
+    return array;
+  }
+  constructor() {
     // Initialize the bag.
     const frequencies = {
       "*": 2,
@@ -69,15 +50,6 @@ export class Game {
       z: 1,
     };
 
-    this.grid = [];
-    for (let i = 1; i <= 15; ++i) {
-      this.grid[i] = [];
-      for (let j = 1; j <= 15; ++j) {
-        this.grid[i][j] = null;
-      }
-    }
-
-    // Create the bag
     this.bag = [];
     for (let letter in frequencies) {
       for (let i = 0; i < frequencies[letter]; ++i) {
@@ -85,23 +57,96 @@ export class Game {
       }
     }
 
-    this.bag = shuffle(this.bag);
-    this.playerturn = true;
+    this.bag = this.shuffle(this.bag);
+    // Initialize the grid.
+    this.grid = [];
+    for (let i = 1; i <= 15; ++i) {
+      this.grid[i] = [];
+      for (let j = 1; j <= 15; ++j) {
+        this.grid[i][j] = null;
+      }
+    }
+  }
+  restoreGameState() {
+    const localStorage = window.localStorage;
+    this.grid = JSON.parse(localStorage.getItem("board"));
+    this.bag = JSON.parse(localStorage.getItem("bag"));
+  }
+  saveGameState() {
+    const localStorage = window.localStorage;
+    console.log("saving...");
+    localStorage.setItem("board", JSON.stringify(this.grid));
+    localStorage.setItem("bag", JSON.stringify(this.bag));
+    this.render(document.getElementById("board"));
+  }
 
-    // Save current state to local storage
-    window.localStorage.setItem("grid", JSON.stringify(this.grid));
-    window.localStorage.setItem("bag", JSON.stringify(this.bag));
-    window.localStorage.setItem("playerturn", JSON.stringify(this.playerturn));
+  resetGameState() {
+    const localStorage = window.localStorage;
+    localStorage.clear();
+    const frequencies = {
+      "*": 2,
+      a: 9,
+      b: 2,
+      c: 2,
+      d: 4,
+      e: 12,
+      f: 2,
+      g: 3,
+      h: 2,
+      i: 9,
+      j: 1,
+      k: 1,
+      l: 4,
+      m: 2,
+      n: 6,
+      o: 8,
+      p: 2,
+      q: 1,
+      r: 6,
+      s: 4,
+      t: 6,
+      u: 4,
+      v: 2,
+      w: 2,
+      x: 1,
+      y: 2,
+      z: 1,
+    };
+    this.bag = [];
+    for (let letter in frequencies) {
+      for (let i = 0; i < frequencies[letter]; ++i) {
+        this.bag.push(letter);
+      }
+    }
+
+    this.bag = this.shuffle(this.bag);
+
+    // Initialize the grid.
+    this.grid = [];
+    for (let i = 1; i <= 15; ++i) {
+      this.grid[i] = [];
+      for (let j = 1; j <= 15; ++j) {
+        this.grid[i][j] = null;
+      }
+    }
+    this.render(document.getElementById("board"));
   }
 
   render(element) {
     element.innerHTML = "";
-
+    const localStorage = window.localStorage;
+    if (localStorage.getItem("board") !== null) {
+      this.restoreGameState();
+      console.log("restored from last time");
+    }
     for (let i = 1; i <= 15; ++i) {
       for (let j = 1; j <= 15; ++j) {
         const div = document.createElement("div");
         div.classList.add("grid-item");
-        div.innerText = this.grid[i][j] === null ? "" : this.grid[i][j];
+        div.innerText =
+          this.grid[i][j] === null || this.grid[i][j] === undefined
+            ? ""
+            : this.grid[i][j];
 
         const label = scoring.label(i, j);
         if (label !== "") {
@@ -114,27 +159,15 @@ export class Game {
   }
 
   /**
-   * A utility function to persist the current state of the bag.
-   */
-  _saveBag() {
-    window.localStorage.setItem("bag", JSON.stringify(this.bag));
-  }
-
-  /**
-   * A utility function to persist the current state of the grid.
-   */
-  _saveGrid() {
-    window.localStorage.setItem("grid", JSON.stringify(this.grid));
-  }
-
-  /**
    * This function removes the first n tiles from the bag and returns them. If n
    * is greater than the number of remaining tiles, this removes and returns all
    * the tiles from the bag. If the bag is empty, this returns an empty array.
+   *
    * @param {number} n The number of tiles to take from the bag.
    * @returns {Array<string>} The first n tiles removed from the bag.
    */
   takeFromBag(n) {
+    console.log(this.bag);
     if (n >= this.bag.length) {
       const drawn = this.bag;
       this.bag = [];
@@ -202,13 +235,15 @@ export class Game {
     if (!this._canBePlacedOnBoard(word, position, direction)) {
       return -1;
     }
+    if (!isValid(word)) {
+      alert("Your word is not valid!");
+      return -1;
+    }
 
     // Place the word on the board
     this._placeOnBoard(word, position, direction);
-
-    // Save the state of the board
-    this._saveGrid();
-    this.playerturn = !this.playerturn;
+    this.saveGameState();
+    console.log("new word saved.");
 
     // Compute the score
     return scoring.score(word, position, direction);

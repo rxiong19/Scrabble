@@ -3,9 +3,6 @@
 // This imports the dictionary of scrabble words.
 import { dictionary } from "./dictionary.js";
 
-// TODO #2: Load the dictionary.
-await dictionary.loadDictionary();
-
 /**
  * This function checks whether a given word can be constructed with the
  * available tiles. The availableTiles object should not be modified.
@@ -151,8 +148,7 @@ function possibleWords(availableTiles) {
   // would execute in O(m!). It would theoretically be faster, since in standard
   // Scrabble, m is constant and equals 7. This other method would however scale
   // really bad with many wildcard tiles.
-  // TODO #3: Use the new dictionary object.
-  for (let word of dictionary.getWords()) {
+  for (let word of dictionary) {
     if (canConstructWord(availableTiles, word)) {
       possibilities.push(word);
     }
@@ -186,33 +182,17 @@ function bestPossibleWords(availableTiles) {
 
   return suggestions;
 }
-
 /**
- * This function will check if a word is valid, that is if it matches any of the
- * words in the dictionary.
- * @param {string} word A string containing lowercase letters, with possible
- * wildcards.
- * @returns {boolean} Returns whether the given word is a valid word.
+ * determine if a word is valid (i.e. it is in the dictionary)
+ * @param {string} word the input word that the user is going to play
+ * @returns {boolean} isValid
  */
 function isValid(word) {
-  // if the word has no wildcard, then we just check if it is in the dictionary.
-  if (!word.includes("*")) {
-    // TODO #3: Use the new dictionary object.
-    // console.log("checking valid");
-    // console.log(dictionary.getWords().includes(word));
-    return dictionary.getWords().includes(word); // replace me
-  }
-
-  // if it does have one or more wildcard, we replace the first one by every
-  // possible character, and recurse.
-  for (let i = 0; i < 26; ++i) {
-    const letter = String.fromCharCode("a".charCodeAt(0) + i);
-    // replace only replaces the first occurence of *.
-    if (isValid(word.replace("*", letter))) {
+  for (let dict_word of dictionary) {
+    if (word === dict_word) {
       return true;
     }
   }
-
   return false;
 }
 
