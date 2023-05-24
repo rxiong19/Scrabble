@@ -1,0 +1,55 @@
+#board {
+  width: 600px;
+  height: 600px;
+  margin: auto;
+  display: grid;
+  grid: repeat(15, auto) / auto-flow;
+  margin-bottom: 3em;
+}
+
+.grid-item {
+  height: 40px;
+  width: 40px;
+  border: 1px solid black;
+  text-transform: uppercase;
+  font-family: sans-serif;
+  font-weight: bold;
+
+  /* The following will align the letters to the center of each square */
+  /* See this useful guide: https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-item:hover {
+  background-color: beige;
+}
+
+.LSx2 {
+  /* TODO #5 */
+  background-color: cyan;
+}
+
+.LSx3 {
+  /* TODO #5 */
+  background-color: blue;
+}
+
+.WSx2 {
+  /* TODO #5 */
+  background-color: pink;
+}
+
+.WSx3 {
+  /* TODO #5 */
+  background-color: red;
+}
+
+#controls {
+  text-align: center;
+}
+
+input[type="number"] {
+  width: 50px;
+}

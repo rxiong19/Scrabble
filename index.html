@@ -1,6 +1,30 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Homework 02 Scrabble Starter</title>
+    <meta charset="UTF-8" />
+    <title>Scrabble</title>
+
+    <script type="module" src="main.js" defer></script>
+    <link rel="stylesheet" href="main.css" />
   </head>
-  <script type="module" src="scrabbleUtilsTest.js"></script>
+  <body>
+    <div id="board"></div>
+    <div id="controls">
+      <!-- TODO #6: Implement UI Controls -->
+      <label for="word">Word:</label>
+      <input type="text" id="word" />
+      <label for="x">x:</label>
+      <input type="number" id="x" />
+      <label for="y">y:</label>
+      <input type="number" id="y" />
+
+      <select name="direction" id="dir">
+        <option value="true">Horizontal</option>
+        <option value="false">Vertical</option>
+      </select>
+
+      <input type="button" id="submit" value="Play!" />
+      <br />
+    </div>
+  </body>
 </html>
