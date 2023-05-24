@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 
 const uri =
-  "mongodb+srv://rxiong:Xrn123456rui.@cluster0.kcweqlg.mongodb.net/?retryWrites=true&w=majority";
+  "mongodb+srv://rxiong:<password>@cluster0.kcweqlg.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new MongoClient(uri);
 await client.connect();
