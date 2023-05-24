@@ -1,7 +1,7 @@
 // This module contains utility functions for the scrabble game.
 
 // This imports the dictionary of scrabble words.
-import { dictionary } from './dictionary.js';
+import { dictionary } from "./dictionary.js";
 
 /**
  * This function checks whether a given word can be constructed with the
@@ -13,31 +13,39 @@ import { dictionary } from './dictionary.js';
  *                    tiles; false otherwise.
  */
 function canConstructWord(availableTiles, word) {
-  const copy = {};
-  for (let letter in availableTiles) {
-    copy[letter] = availableTiles[letter];
-  }
+  // TODO #1
+  let letter_requirement = {};
+  let num_wildcard = availableTiles["*"];
 
-  for (let letter of word) {
-    if (letter in copy) {
-      --copy[letter];
+  word.split("").map((letter) => {
+    if (letter_requirement[letter] === undefined) {
+      letter_requirement[letter] = 0;
+    }
+    letter_requirement[letter] += 1;
+  });
 
-      if (copy[letter] === 0) {
-        delete copy[letter];
-      }
-    } else {
-      if ('*' in copy) {
-        --copy['*'];
-
-        if (copy['*'] === 0) {
-          delete copy['*'];
-        }
-      } else {
+  for (let [require_letter, num_required] of Object.entries(
+    letter_requirement
+  )) {
+    if (
+      availableTiles[require_letter] < num_required ||
+      availableTiles[require_letter] === undefined
+    ) {
+      if (num_wildcard === undefined || num_wildcard <= 0) {
         return false;
+      } else {
+        let available_num =
+          availableTiles[require_letter] === undefined
+            ? 0
+            : availableTiles[require_letter];
+        num_wildcard = num_wildcard - (num_required - available_num);
+        if (num_wildcard < 0) {
+          return false;
+        }
       }
     }
   }
-
+  // console.log(letter_requirement);
   return true;
 }
 
@@ -50,8 +58,9 @@ function canConstructWord(availableTiles, word) {
  * @returns {number} The base score of the given word.
  */
 function baseScore(word) {
-  const scores = {
-    '*': 0,
+  // TODO #2
+  const score_book = {
+    "*": 0,
     a: 1,
     b: 3,
     c: 3,
@@ -79,13 +88,21 @@ function baseScore(word) {
     y: 4,
     z: 10,
   };
-
   let score = 0;
+  let letter_requirement = {};
+  word.split("").map((letter) => {
+    if (letter_requirement[letter] === undefined) {
+      letter_requirement[letter] = 0;
+    }
+    letter_requirement[letter] += 1;
+  });
 
-  for (let letter of word) {
-    score += scores[letter];
+  for (let [require_letter, num_required] of Object.entries(
+    letter_requirement
+  )) {
+    score += score_book[require_letter] * num_required;
   }
-
+  //console.log("base score: " + score);
   return score;
 }
 
@@ -97,20 +114,12 @@ function baseScore(word) {
  * @returns {string[]} The words that can be constructed with the given tiles.
  */
 function possibleWords(availableTiles) {
-  const possibilities = [];
+  // TODO #3
+  let possible_words = Object.assign([], dictionary);
 
-  // Let n be the size of the dictionary, m be the number of tiles in hand. This
-  // implementation is not the fastest, O(nm). We could use permutations which
-  // would execute in O(m!). It would theoretically be faster, since in standard
-  // Scrabble, m is constant and equals 7. This other method would however scale
-  // really bad with many wildcard tiles.
-  for (let word of dictionary) {
-    if (canConstructWord(availableTiles, word)) {
-      possibilities.push(word);
-    }
-  }
-
-  return possibilities;
+  return possible_words.filter((word) =>
+    canConstructWord(availableTiles, word)
+  );
 }
 
 /**
@@ -121,22 +130,45 @@ function possibleWords(availableTiles) {
  * @returns {string[]} The words with the highest base score.
  */
 function bestPossibleWords(availableTiles) {
-  const possibilities = possibleWords(availableTiles);
+  // TODO #4
+  let possible_words = possibleWords(availableTiles);
+  let max_score = 0;
+  const modify_word = (word) => {
+    let tiles_copy = Object.assign({}, availableTiles);
+    return word
+      .split("")
+      .map((letter) => {
+        if (
+          tiles_copy[letter] === undefined ||
+          tiles_copy[letter] === 0 ||
+          tiles_copy[letter] === null
+        ) {
+          return "*";
+        }
+        tiles_copy[letter] -= 1;
+        return letter;
+      })
+      .join("");
+  };
 
-  let suggestions = [];
-  let max = -1;
-
-  for (let word of possibilities) {
-    const score = baseScore(constructWord(availableTiles, word).join(''));
-    if (score > max) {
-      max = score;
-      suggestions = [word];
-    } else if (score === max) {
-      suggestions.push(word);
+  possible_words.map((word) => {
+    word = modify_word(word);
+    let current_score = baseScore(word);
+    if (current_score > max_score) {
+      max_score = current_score;
     }
-  }
+  });
 
-  return suggestions;
+  let best_list = [];
+  possible_words.map((word) => {
+    let unmodified = word;
+    word = modify_word(word);
+    if (baseScore(word) === max_score) {
+      best_list.push(unmodified);
+    }
+  });
+
+  return best_list;
 }
 
 // This exports our public functions.
