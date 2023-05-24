@@ -10,20 +10,21 @@
   <body>
     <div id="board"></div>
     <div id="controls">
-      <label for="word">Word: </label><input type="text" id="word" />
-      <label for="x">x: </label><input type="number" id="x" min="1" max="15" />
-      <label for="y">y: </label><input type="number" id="y" min="1" max="15" />
-      <select id="direction">
-        <option value="horizontal">Horizontal</option>
-        <option value="vertical">Vertical</option>
+      <!-- TODO #6: Implement UI Controls -->
+      <label for="word">Word:</label>
+      <input type="text" id="word" />
+      <label for="x">x:</label>
+      <input type="number" id="x" />
+      <label for="y">y:</label>
+      <input type="number" id="y" />
+
+      <select name="direction" id="dir">
+        <option value="true">Horizontal</option>
+        <option value="false">Vertical</option>
       </select>
-      <input type="button" value="Play!" id="play" />
-      <input type="button" value="Reset" id="reset" />
-      <input type="button" value="Help" id="help" />
-      <br /><br /><br /><br />
+
+      <input type="button" id="submit" value="Play!" />
+      <br />
     </div>
-    <div id="rack"></div>
-    <br />
-    <div id="hint"></div>
   </body>
 </html>

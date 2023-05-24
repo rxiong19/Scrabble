@@ -1,26 +1,13 @@
+import { shuffle } from "./shuffle.js";
 import { scoring } from "./scoring.js";
-import { isValid } from "./scrabbleUtils.js";
 
 export class Game {
-  shuffle(array) {
-    // Fisher-Yates shuffle, used for random decoder cipher below
-    let m = array.length;
-
-    // While there remain elements to shuffle…
-    while (m) {
-      // Pick a remaining element…
-      let i = Math.floor(Math.random() * m--);
-
-      // And swap it with the current element.
-      let t = array[m];
-      array[m] = array[i];
-      array[i] = t;
-    }
-    return array;
-  }
   constructor() {
-    // Initialize the bag.
-    const frequencies = {
+    // TODO #1: Initialize the game state
+    this.bag = [];
+    this.grid = [];
+
+    let bag_manual = {
       "*": 2,
       a: 9,
       b: 2,
@@ -49,113 +36,63 @@ export class Game {
       y: 2,
       z: 1,
     };
-
-    this.bag = [];
-    for (let letter in frequencies) {
-      for (let i = 0; i < frequencies[letter]; ++i) {
-        this.bag.push(letter);
+    let init_bag = [];
+    for (const [key, value] of Object.entries(bag_manual)) {
+      for (let i = 0; i < value; i++) {
+        init_bag.push(key);
       }
     }
+    //console.log(init_bag);
+    this.bag = shuffle(init_bag);
 
-    this.bag = this.shuffle(this.bag);
-    // Initialize the grid.
-    this.grid = [];
-    for (let i = 1; i <= 15; ++i) {
-      this.grid[i] = [];
-      for (let j = 1; j <= 15; ++j) {
-        this.grid[i][j] = null;
-      }
+    for (let i = 0; i < 15; i++) {
+      this.grid.push([
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+        [null],
+      ]);
     }
-  }
-  restoreGameState() {
-    const localStorage = window.localStorage;
-    this.grid = JSON.parse(localStorage.getItem("board"));
-    this.bag = JSON.parse(localStorage.getItem("bag"));
-  }
-  saveGameState() {
-    const localStorage = window.localStorage;
-    console.log("saving...");
-    localStorage.setItem("board", JSON.stringify(this.grid));
-    localStorage.setItem("bag", JSON.stringify(this.bag));
-    this.render(document.getElementById("board"));
-  }
-
-  resetGameState() {
-    const localStorage = window.localStorage;
-    localStorage.clear();
-    const frequencies = {
-      "*": 2,
-      a: 9,
-      b: 2,
-      c: 2,
-      d: 4,
-      e: 12,
-      f: 2,
-      g: 3,
-      h: 2,
-      i: 9,
-      j: 1,
-      k: 1,
-      l: 4,
-      m: 2,
-      n: 6,
-      o: 8,
-      p: 2,
-      q: 1,
-      r: 6,
-      s: 4,
-      t: 6,
-      u: 4,
-      v: 2,
-      w: 2,
-      x: 1,
-      y: 2,
-      z: 1,
-    };
-    this.bag = [];
-    for (let letter in frequencies) {
-      for (let i = 0; i < frequencies[letter]; ++i) {
-        this.bag.push(letter);
-      }
-    }
-
-    this.bag = this.shuffle(this.bag);
-
-    // Initialize the grid.
-    this.grid = [];
-    for (let i = 1; i <= 15; ++i) {
-      this.grid[i] = [];
-      for (let j = 1; j <= 15; ++j) {
-        this.grid[i][j] = null;
-      }
-    }
-    this.render(document.getElementById("board"));
+    console.log(this.grid);
   }
 
   render(element) {
+    // TODO #5: Render the board.
     element.innerHTML = "";
-    const localStorage = window.localStorage;
-    if (localStorage.getItem("board") !== null) {
-      this.restoreGameState();
-      console.log("restored from last time");
-    }
-    for (let i = 1; i <= 15; ++i) {
-      for (let j = 1; j <= 15; ++j) {
-        const div = document.createElement("div");
-        div.classList.add("grid-item");
-        div.innerText =
-          this.grid[i][j] === null || this.grid[i][j] === undefined
-            ? ""
-            : this.grid[i][j];
 
-        const label = scoring.label(i, j);
+    this.grid.forEach((row, row_index) => {
+      //console.log(row_index);
+      row.forEach((grid, grid_index) => {
+        let label = scoring.label(row_index + 1, grid_index + 1);
+        //console.log("( " + row_index + " , " + grid_index + ") : " + label);
+        //console.log(grid[0]);
         if (label !== "") {
-          div.classList.add(label);
+          if (grid[0] !== null) {
+            element.innerHTML +=
+              "<div class='grid-item " + label + "'>" + grid[0] + "<div>";
+          } else {
+            element.innerHTML += "<div class='grid-item " + label + "'> <div>";
+          }
+        } else {
+          if (grid[0] !== null) {
+            element.innerHTML += "<div class='grid-item'>" + grid[0] + "<div>";
+          } else {
+            element.innerHTML += "<div class='grid-item'> <div>";
+          }
         }
-
-        element.appendChild(div);
-      }
-    }
+      });
+    });
   }
 
   /**
@@ -167,18 +104,17 @@ export class Game {
    * @returns {Array<string>} The first n tiles removed from the bag.
    */
   takeFromBag(n) {
-    console.log(this.bag);
-    if (n >= this.bag.length) {
-      const drawn = this.bag;
+    // TODO #3: Take n tiles from the bag.
+    let bag = Object.assign([], this.bag);
+    let will_take = [];
+    if (bag.length >= n) {
+      will_take = bag.slice(0, n);
+      this.bag = bag.slice(n, bag.length);
+    } else if (bag.length < n && bag.length > 0) {
+      will_take = this.bag;
       this.bag = [];
-      return drawn;
     }
-
-    const drawn = [];
-    for (let i = 0; i < n; ++i) {
-      drawn.push(this.bag.pop());
-    }
-    return drawn;
+    return will_take;
   }
 
   /**
@@ -193,26 +129,55 @@ export class Game {
   }
 
   _canBePlacedOnBoard(word, position, direction) {
-    const grid = this.grid;
-    const letters = word.split("");
-    const placement = direction
-      ? letters.map((letter, i) => grid[position.x + i][position.y] === null)
-      : letters.map((letter, i) => grid[position.x][position.y + i] === null);
+    const cur_grid = this.grid;
+    let available_space = 0;
+    const x = Number(position["x"]) - 1;
+    const y = Number(position["y"]) - 1;
+    console.log(x + ", " + y);
 
-    return !placement.includes(false);
+    if (!direction) {
+      //vertical
+      for (let i = y; i < 15; i++) {
+        console.log(x + ", " + i);
+        if (cur_grid[x][i][0] === null) {
+          available_space += 1;
+        } else {
+          break;
+        }
+      }
+    } else {
+      for (let i = x; i < 15; i++) {
+        if (cur_grid[i][y][0] === null) {
+          available_space += 1;
+        } else {
+          break;
+        }
+      }
+    }
+    console.log("available:" + available_space);
+    console.log(available_space >= word.length);
+    return available_space >= word.length ? true : false;
   }
 
   _placeOnBoard(word, position, direction) {
-    const grid = this.grid;
-    const letters = word.split("");
-    if (direction) {
-      letters.forEach(
-        (letter, i) => (grid[position.x + i][position.y] = letter)
-      );
+    // TODO #2: Place the word on the board.
+    const x = Number(position["x"]) - 1;
+    const y = Number(position["y"]) - 1;
+    if (!direction) {
+      //vertical
+      let j = 0;
+
+      for (let i = y; i < word.length + y; i++) {
+        this.grid[x][i] = word[j];
+        //console.log(this.grid[y - 1][i][0]);
+        j += 1;
+      }
     } else {
-      letters.forEach(
-        (letter, i) => (grid[position.x][position.y + i] = letter)
-      );
+      let j = 0;
+      for (let i = x; i < word.length + x; i++) {
+        this.grid[i][y] = word[j];
+        j += 1;
+      }
     }
   }
 
@@ -235,15 +200,9 @@ export class Game {
     if (!this._canBePlacedOnBoard(word, position, direction)) {
       return -1;
     }
-    if (!isValid(word)) {
-      alert("Your word is not valid!");
-      return -1;
-    }
 
     // Place the word on the board
     this._placeOnBoard(word, position, direction);
-    this.saveGameState();
-    console.log("new word saved.");
 
     // Compute the score
     return scoring.score(word, position, direction);

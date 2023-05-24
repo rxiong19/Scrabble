@@ -6,14 +6,6 @@
   grid: repeat(15, auto) / auto-flow;
   margin-bottom: 3em;
 }
-#rack {
-  margin: auto;
-  background-color: white;
-  color: black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .grid-item {
   height: 40px;
@@ -35,21 +27,23 @@
 }
 
 .LSx2 {
+  /* TODO #5 */
   background-color: cyan;
 }
 
 .LSx3 {
+  /* TODO #5 */
   background-color: blue;
-  color: white;
 }
 
 .WSx2 {
+  /* TODO #5 */
   background-color: pink;
 }
 
 .WSx3 {
+  /* TODO #5 */
   background-color: red;
-  color: white;
 }
 
 #controls {
@@ -58,7 +52,4 @@
 
 input[type="number"] {
   width: 50px;
-}
-.hint_text {
-  text-align: center;
 }

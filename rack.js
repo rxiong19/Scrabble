@@ -21,67 +21,12 @@ export class Rack {
    * @param {Game} game The game whose bag to take the tiles from.
    */
   takeFromBag(n, game) {
-    for (let tile of game.takeFromBag(n)) {
-      console.log(tile.length);
-      if (tile in this.available) {
-        ++this.available[tile];
-      } else {
-        this.available[tile] = 1;
+    // TODO #4: Take n tiles from the bag; update the available tiles.
+    game.takeFromBag(n).map((letter) => {
+      if (this.available[letter] === null) {
+        this.available[letter] = 0;
       }
-    }
-  }
-
-  restoreRack() {
-    const localStorage = window.localStorage;
-    this.available = JSON.parse(localStorage.getItem("rack"));
-  }
-  saveRack() {
-    const localStorage = window.localStorage;
-    console.log("saving...");
-    localStorage.setItem("rack", JSON.stringify(this.available));
-  }
-
-  render(element, game) {
-    const localStorage = window.localStorage;
-    if (localStorage.getItem("rack") !== null) {
-      this.restoreRack();
-    } else {
-      let need = 0;
-      for (let letter of Object.keys(this.available)) {
-        need += this.available[letter];
-      }
-      this.takeFromBag(7 - need, game);
-    }
-
-    element.innerHTML = "";
-    for (let letter of Object.keys(this.available)) {
-      for (let i = 0; i < this.available[letter]; i++) {
-        const div = document.createElement("div");
-        div.classList.add("grid-item");
-        //console.log(letter);
-        div.innerText = letter;
-        element.appendChild(div);
-      }
-    }
-    this.saveRack();
-  }
-  removeTile(word, element, game) {
-    const localStorage = window.localStorage;
-    let letter_requirement = {};
-    word.split("").map((letter) => {
-      if (letter_requirement[letter] === undefined) {
-        letter_requirement[letter] = 0;
-      }
-      letter_requirement[letter] += 1;
+      this.available[letter] += 1;
     });
-    for (let letter of Object.keys(letter_requirement)) {
-      this.available[letter] -= letter_requirement[letter];
-      if (this.available[letter] === 0) {
-        delete this.available[letter];
-      }
-    }
-    localStorage.removeItem("rack");
-
-    this.render(element, game);
   }
 }

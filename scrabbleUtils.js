@@ -1,7 +1,7 @@
 // This module contains utility functions for the scrabble game.
 
 // This imports the dictionary of scrabble words.
-import { dictionary } from "./dictionary.js";
+import { dictionary } from './dictionary.js';
 
 /**
  * This function checks whether a given word can be constructed with the
@@ -26,11 +26,11 @@ function canConstructWord(availableTiles, word) {
         delete copy[letter];
       }
     } else {
-      if ("*" in copy) {
-        --copy["*"];
+      if ('*' in copy) {
+        --copy['*'];
 
-        if (copy["*"] === 0) {
-          delete copy["*"];
+        if (copy['*'] === 0) {
+          delete copy['*'];
         }
       } else {
         return false;
@@ -39,50 +39,6 @@ function canConstructWord(availableTiles, word) {
   }
 
   return true;
-}
-
-/**
- * This function tris to build a word given a set of available tiles. It will
- * prioritize letter tiles over wildcards. It will return the list of tiles
- * used, or null if the word is not constructible with the given tiles.
- *
- * @param {Object<string, number>} availableTiles A collection of available
- * tiles and their amount.
- * @param {string} word The word a player wants to construct.
- * @returns {Array<string>} The letters used to construct the word, or null if
- * it is not constructible with the tiles.
- */
-function constructWord(availableTiles, word) {
-  const copy = {};
-  for (let letter in availableTiles) {
-    copy[letter] = availableTiles[letter];
-  }
-
-  const tiles = [];
-
-  for (let letter of word) {
-    if (letter in copy) {
-      tiles.push(letter);
-      --copy[letter];
-
-      if (copy[letter] === 0) {
-        delete copy[letter];
-      }
-    } else {
-      if ("*" in copy) {
-        tiles.push("*");
-        --copy["*"];
-
-        if (copy["*"] === 0) {
-          delete copy["*"];
-        }
-      } else {
-        return null;
-      }
-    }
-  }
-
-  return tiles;
 }
 
 /**
@@ -95,7 +51,7 @@ function constructWord(availableTiles, word) {
  */
 function baseScore(word) {
   const scores = {
-    "*": 0,
+    '*': 0,
     a: 1,
     b: 3,
     c: 3,
@@ -171,7 +127,7 @@ function bestPossibleWords(availableTiles) {
   let max = -1;
 
   for (let word of possibilities) {
-    const score = baseScore(constructWord(availableTiles, word).join(""));
+    const score = baseScore(constructWord(availableTiles, word).join(''));
     if (score > max) {
       max = score;
       suggestions = [word];
@@ -182,26 +138,6 @@ function bestPossibleWords(availableTiles) {
 
   return suggestions;
 }
-/**
- * determine if a word is valid (i.e. it is in the dictionary)
- * @param {string} word the input word that the user is going to play
- * @returns {boolean} isValid
- */
-function isValid(word) {
-  for (let dict_word of dictionary) {
-    if (word === dict_word) {
-      return true;
-    }
-  }
-  return false;
-}
 
 // This exports our public functions.
-export {
-  canConstructWord,
-  constructWord,
-  baseScore,
-  possibleWords,
-  bestPossibleWords,
-  isValid,
-};
+export { canConstructWord, baseScore, possibleWords, bestPossibleWords };

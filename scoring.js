@@ -45,7 +45,7 @@ class Scoring {
     let wordMultiplier = 1;
 
     // Split the word into individual letters so we can iterate over them
-    const letters = word.split('');
+    const letters = word.split("");
 
     // Compute the score for each letter in the word
     letters.forEach((letter, i) => {
@@ -60,13 +60,13 @@ class Scoring {
       const boardMultiplier = this.board[coordinate.x][coordinate.y];
 
       // If the letter's position is on a word multiplier, we accumulate it
-      if (boardMultiplier && boardMultiplier.kind === 'ws') {
+      if (boardMultiplier && boardMultiplier.kind === "ws") {
         wordMultiplier *= boardMultiplier.multiplier;
       }
 
       // If the letter's position is on a letter multiplier, we save it
       let letterMultiplier = 1;
-      if (boardMultiplier && boardMultiplier.kind === 'ls') {
+      if (boardMultiplier && boardMultiplier.kind === "ls") {
         letterMultiplier = boardMultiplier.multiplier;
       }
 
@@ -101,13 +101,13 @@ class Scoring {
     if (multiplier) {
       return `${multiplier.kind.toUpperCase()}x${multiplier.multiplier}`;
     }
-    return '';
+    return "";
   }
 }
 
 // An object mapping letters to their Scrabble scores (English)
 export const letterScores = {
-  '*': 0,
+  "*": 0,
   a: 1,
   b: 3,
   c: 3,
@@ -167,73 +167,73 @@ function findMultipliers(x, y) {
 //  - multiplier: the multiplier for the board position (2 or 3)
 const positionMultipliers = [
   // Letter Score x2
-  { x: 7, y: 7, kind: 'ls', multiplier: 2 },
-  { x: 9, y: 7, kind: 'ls', multiplier: 2 },
-  { x: 7, y: 9, kind: 'ls', multiplier: 2 },
-  { x: 9, y: 9, kind: 'ls', multiplier: 2 },
-  { x: 8, y: 4, kind: 'ls', multiplier: 2 },
-  { x: 7, y: 3, kind: 'ls', multiplier: 2 },
-  { x: 9, y: 3, kind: 'ls', multiplier: 2 },
-  { x: 4, y: 1, kind: 'ls', multiplier: 2 },
-  { x: 12, y: 1, kind: 'ls', multiplier: 2 },
-  { x: 8, y: 12, kind: 'ls', multiplier: 2 },
-  { x: 7, y: 13, kind: 'ls', multiplier: 2 },
-  { x: 9, y: 13, kind: 'ls', multiplier: 2 },
-  { x: 4, y: 15, kind: 'ls', multiplier: 2 },
-  { x: 12, y: 15, kind: 'ls', multiplier: 2 },
-  { x: 4, y: 8, kind: 'ls', multiplier: 2 },
-  { x: 3, y: 7, kind: 'ls', multiplier: 2 },
-  { x: 3, y: 9, kind: 'ls', multiplier: 2 },
-  { x: 1, y: 4, kind: 'ls', multiplier: 2 },
-  { x: 1, y: 12, kind: 'ls', multiplier: 2 },
-  { x: 12, y: 8, kind: 'ls', multiplier: 2 },
-  { x: 13, y: 7, kind: 'ls', multiplier: 2 },
-  { x: 13, y: 9, kind: 'ls', multiplier: 2 },
-  { x: 15, y: 4, kind: 'ls', multiplier: 2 },
-  { x: 15, y: 12, kind: 'ls', multiplier: 2 },
+  { x: 7, y: 7, kind: "ls", multiplier: 2 },
+  { x: 9, y: 7, kind: "ls", multiplier: 2 },
+  { x: 7, y: 9, kind: "ls", multiplier: 2 },
+  { x: 9, y: 9, kind: "ls", multiplier: 2 },
+  { x: 8, y: 4, kind: "ls", multiplier: 2 },
+  { x: 7, y: 3, kind: "ls", multiplier: 2 },
+  { x: 9, y: 3, kind: "ls", multiplier: 2 },
+  { x: 4, y: 1, kind: "ls", multiplier: 2 },
+  { x: 12, y: 1, kind: "ls", multiplier: 2 },
+  { x: 8, y: 12, kind: "ls", multiplier: 2 },
+  { x: 7, y: 13, kind: "ls", multiplier: 2 },
+  { x: 9, y: 13, kind: "ls", multiplier: 2 },
+  { x: 4, y: 15, kind: "ls", multiplier: 2 },
+  { x: 12, y: 15, kind: "ls", multiplier: 2 },
+  { x: 4, y: 8, kind: "ls", multiplier: 2 },
+  { x: 3, y: 7, kind: "ls", multiplier: 2 },
+  { x: 3, y: 9, kind: "ls", multiplier: 2 },
+  { x: 1, y: 4, kind: "ls", multiplier: 2 },
+  { x: 1, y: 12, kind: "ls", multiplier: 2 },
+  { x: 12, y: 8, kind: "ls", multiplier: 2 },
+  { x: 13, y: 7, kind: "ls", multiplier: 2 },
+  { x: 13, y: 9, kind: "ls", multiplier: 2 },
+  { x: 15, y: 4, kind: "ls", multiplier: 2 },
+  { x: 15, y: 12, kind: "ls", multiplier: 2 },
 
   // Letter Score x3
-  { x: 6, y: 2, kind: 'ls', multiplier: 3 },
-  { x: 10, y: 2, kind: 'ls', multiplier: 3 },
-  { x: 2, y: 6, kind: 'ls', multiplier: 3 },
-  { x: 6, y: 6, kind: 'ls', multiplier: 3 },
-  { x: 10, y: 6, kind: 'ls', multiplier: 3 },
-  { x: 14, y: 6, kind: 'ls', multiplier: 3 },
-  { x: 2, y: 10, kind: 'ls', multiplier: 3 },
-  { x: 6, y: 10, kind: 'ls', multiplier: 3 },
-  { x: 10, y: 10, kind: 'ls', multiplier: 3 },
-  { x: 14, y: 10, kind: 'ls', multiplier: 3 },
-  { x: 6, y: 14, kind: 'ls', multiplier: 3 },
-  { x: 10, y: 14, kind: 'ls', multiplier: 3 },
+  { x: 6, y: 2, kind: "ls", multiplier: 3 },
+  { x: 10, y: 2, kind: "ls", multiplier: 3 },
+  { x: 2, y: 6, kind: "ls", multiplier: 3 },
+  { x: 6, y: 6, kind: "ls", multiplier: 3 },
+  { x: 10, y: 6, kind: "ls", multiplier: 3 },
+  { x: 14, y: 6, kind: "ls", multiplier: 3 },
+  { x: 2, y: 10, kind: "ls", multiplier: 3 },
+  { x: 6, y: 10, kind: "ls", multiplier: 3 },
+  { x: 10, y: 10, kind: "ls", multiplier: 3 },
+  { x: 14, y: 10, kind: "ls", multiplier: 3 },
+  { x: 6, y: 14, kind: "ls", multiplier: 3 },
+  { x: 10, y: 14, kind: "ls", multiplier: 3 },
 
   // Word Score x32
-  { x: 8, y: 8, kind: 'ws', multiplier: 2 },
-  { x: 2, y: 2, kind: 'ws', multiplier: 2 },
-  { x: 3, y: 3, kind: 'ws', multiplier: 2 },
-  { x: 4, y: 4, kind: 'ws', multiplier: 2 },
-  { x: 5, y: 5, kind: 'ws', multiplier: 2 },
-  { x: 11, y: 11, kind: 'ws', multiplier: 2 },
-  { x: 12, y: 12, kind: 'ws', multiplier: 2 },
-  { x: 13, y: 13, kind: 'ws', multiplier: 2 },
-  { x: 14, y: 14, kind: 'ws', multiplier: 2 },
-  { x: 2, y: 14, kind: 'ws', multiplier: 2 },
-  { x: 3, y: 13, kind: 'ws', multiplier: 2 },
-  { x: 4, y: 12, kind: 'ws', multiplier: 2 },
-  { x: 5, y: 11, kind: 'ws', multiplier: 2 },
-  { x: 11, y: 5, kind: 'ws', multiplier: 2 },
-  { x: 12, y: 4, kind: 'ws', multiplier: 2 },
-  { x: 13, y: 3, kind: 'ws', multiplier: 2 },
-  { x: 14, y: 2, kind: 'ws', multiplier: 2 },
+  { x: 8, y: 8, kind: "ws", multiplier: 2 },
+  { x: 2, y: 2, kind: "ws", multiplier: 2 },
+  { x: 3, y: 3, kind: "ws", multiplier: 2 },
+  { x: 4, y: 4, kind: "ws", multiplier: 2 },
+  { x: 5, y: 5, kind: "ws", multiplier: 2 },
+  { x: 11, y: 11, kind: "ws", multiplier: 2 },
+  { x: 12, y: 12, kind: "ws", multiplier: 2 },
+  { x: 13, y: 13, kind: "ws", multiplier: 2 },
+  { x: 14, y: 14, kind: "ws", multiplier: 2 },
+  { x: 2, y: 14, kind: "ws", multiplier: 2 },
+  { x: 3, y: 13, kind: "ws", multiplier: 2 },
+  { x: 4, y: 12, kind: "ws", multiplier: 2 },
+  { x: 5, y: 11, kind: "ws", multiplier: 2 },
+  { x: 11, y: 5, kind: "ws", multiplier: 2 },
+  { x: 12, y: 4, kind: "ws", multiplier: 2 },
+  { x: 13, y: 3, kind: "ws", multiplier: 2 },
+  { x: 14, y: 2, kind: "ws", multiplier: 2 },
 
   // Word Score x32
-  { x: 1, y: 1, kind: 'ws', multiplier: 3 },
-  { x: 8, y: 1, kind: 'ws', multiplier: 3 },
-  { x: 15, y: 1, kind: 'ws', multiplier: 3 },
-  { x: 1, y: 8, kind: 'ws', multiplier: 3 },
-  { x: 15, y: 8, kind: 'ws', multiplier: 3 },
-  { x: 1, y: 15, kind: 'ws', multiplier: 3 },
-  { x: 8, y: 15, kind: 'ws', multiplier: 3 },
-  { x: 15, y: 15, kind: 'ws', multiplier: 3 },
+  { x: 1, y: 1, kind: "ws", multiplier: 3 },
+  { x: 8, y: 1, kind: "ws", multiplier: 3 },
+  { x: 15, y: 1, kind: "ws", multiplier: 3 },
+  { x: 1, y: 8, kind: "ws", multiplier: 3 },
+  { x: 15, y: 8, kind: "ws", multiplier: 3 },
+  { x: 1, y: 15, kind: "ws", multiplier: 3 },
+  { x: 8, y: 15, kind: "ws", multiplier: 3 },
+  { x: 15, y: 15, kind: "ws", multiplier: 3 },
 ];
 
 // Export the one and only Scoring object.
