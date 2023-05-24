@@ -1,8 +1,9 @@
 // This module contains utility functions for the scrabble game.
 
 // This imports the dictionary of scrabble words.
-import { dictionary } from './dictionary.js';
+import { dictionary } from "./dictionary.js";
 
+// TODO #2: Load the dictionary.
 await dictionary.loadDictionary();
 
 /**
@@ -28,11 +29,11 @@ function canConstructWord(availableTiles, word) {
         delete copy[letter];
       }
     } else {
-      if ('*' in copy) {
-        --copy['*'];
+      if ("*" in copy) {
+        --copy["*"];
 
-        if (copy['*'] === 0) {
-          delete copy['*'];
+        if (copy["*"] === 0) {
+          delete copy["*"];
         }
       } else {
         return false;
@@ -71,12 +72,12 @@ function constructWord(availableTiles, word) {
         delete copy[letter];
       }
     } else {
-      if ('*' in copy) {
-        tiles.push('*');
-        --copy['*'];
+      if ("*" in copy) {
+        tiles.push("*");
+        --copy["*"];
 
-        if (copy['*'] === 0) {
-          delete copy['*'];
+        if (copy["*"] === 0) {
+          delete copy["*"];
         }
       } else {
         return null;
@@ -97,7 +98,7 @@ function constructWord(availableTiles, word) {
  */
 function baseScore(word) {
   const scores = {
-    '*': 0,
+    "*": 0,
     a: 1,
     b: 3,
     c: 3,
@@ -150,6 +151,7 @@ function possibleWords(availableTiles) {
   // would execute in O(m!). It would theoretically be faster, since in standard
   // Scrabble, m is constant and equals 7. This other method would however scale
   // really bad with many wildcard tiles.
+  // TODO #3: Use the new dictionary object.
   for (let word of dictionary.getWords()) {
     if (canConstructWord(availableTiles, word)) {
       possibilities.push(word);
@@ -173,7 +175,7 @@ function bestPossibleWords(availableTiles) {
   let max = -1;
 
   for (let word of possibilities) {
-    const score = baseScore(constructWord(availableTiles, word).join(''));
+    const score = baseScore(constructWord(availableTiles, word).join(""));
     if (score > max) {
       max = score;
       suggestions = [word];
@@ -194,16 +196,19 @@ function bestPossibleWords(availableTiles) {
  */
 function isValid(word) {
   // if the word has no wildcard, then we just check if it is in the dictionary.
-  if (!word.includes('*')) {
-    return dictionary.getWords().includes(word);
+  if (!word.includes("*")) {
+    // TODO #3: Use the new dictionary object.
+    // console.log("checking valid");
+    // console.log(dictionary.getWords().includes(word));
+    return dictionary.getWords().includes(word); // replace me
   }
 
   // if it does have one or more wildcard, we replace the first one by every
   // possible character, and recurse.
   for (let i = 0; i < 26; ++i) {
-    const letter = String.fromCharCode('a'.charCodeAt(0) + i);
+    const letter = String.fromCharCode("a".charCodeAt(0) + i);
     // replace only replaces the first occurence of *.
-    if (isValid(word.replace('*', letter))) {
+    if (isValid(word.replace("*", letter))) {
       return true;
     }
   }

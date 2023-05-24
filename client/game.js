@@ -1,4 +1,4 @@
-import { scoring } from './scoring.js';
+import { scoring } from "./scoring.js";
 
 function shuffle(array) {
   // Fisher-Yates shuffle, used for random decoder cipher below
@@ -21,11 +21,13 @@ function shuffle(array) {
 export class Game {
   constructor() {
     if (
-      window.localStorage.getItem('grid') !== null &&
-      window.localStorage.getItem('bag') !== null
+      window.localStorage.getItem("grid") !== null &&
+      window.localStorage.getItem("bag") !== null &&
+      window.localStorage.getItem("playerturn") !== null
     ) {
-      this.grid = JSON.parse(window.localStorage.getItem('grid'));
-      this.bag = JSON.parse(window.localStorage.getItem('bag'));
+      this.grid = JSON.parse(window.localStorage.getItem("grid"));
+      this.bag = JSON.parse(window.localStorage.getItem("bag"));
+      this.playerturn = JSON.parse(window.localStorage.getItem("playerturn"));
     } else {
       this.reset();
     }
@@ -38,7 +40,7 @@ export class Game {
   reset() {
     // Initialize the bag.
     const frequencies = {
-      '*': 2,
+      "*": 2,
       a: 9,
       b: 2,
       c: 2,
@@ -84,23 +86,25 @@ export class Game {
     }
 
     this.bag = shuffle(this.bag);
+    this.playerturn = true;
 
     // Save current state to local storage
-    window.localStorage.setItem('grid', JSON.stringify(this.grid));
-    window.localStorage.setItem('bag', JSON.stringify(this.bag));
+    window.localStorage.setItem("grid", JSON.stringify(this.grid));
+    window.localStorage.setItem("bag", JSON.stringify(this.bag));
+    window.localStorage.setItem("playerturn", JSON.stringify(this.playerturn));
   }
 
   render(element) {
-    element.innerHTML = '';
+    element.innerHTML = "";
 
     for (let i = 1; i <= 15; ++i) {
       for (let j = 1; j <= 15; ++j) {
-        const div = document.createElement('div');
-        div.classList.add('grid-item');
-        div.innerText = this.grid[i][j] === null ? '' : this.grid[i][j];
+        const div = document.createElement("div");
+        div.classList.add("grid-item");
+        div.innerText = this.grid[i][j] === null ? "" : this.grid[i][j];
 
         const label = scoring.label(i, j);
-        if (label !== '') {
+        if (label !== "") {
           div.classList.add(label);
         }
 
@@ -113,14 +117,14 @@ export class Game {
    * A utility function to persist the current state of the bag.
    */
   _saveBag() {
-    window.localStorage.setItem('bag', JSON.stringify(this.bag));
+    window.localStorage.setItem("bag", JSON.stringify(this.bag));
   }
 
   /**
    * A utility function to persist the current state of the grid.
    */
   _saveGrid() {
-    window.localStorage.setItem('grid', JSON.stringify(this.grid));
+    window.localStorage.setItem("grid", JSON.stringify(this.grid));
   }
 
   /**
@@ -157,7 +161,7 @@ export class Game {
 
   _canBePlacedOnBoard(word, position, direction) {
     const grid = this.grid;
-    const letters = word.split('');
+    const letters = word.split("");
     const placement = direction
       ? letters.map((letter, i) => grid[position.x + i][position.y] === null)
       : letters.map((letter, i) => grid[position.x][position.y + i] === null);
@@ -167,7 +171,7 @@ export class Game {
 
   _placeOnBoard(word, position, direction) {
     const grid = this.grid;
-    const letters = word.split('');
+    const letters = word.split("");
     if (direction) {
       letters.forEach(
         (letter, i) => (grid[position.x + i][position.y] = letter)
@@ -204,6 +208,7 @@ export class Game {
 
     // Save the state of the board
     this._saveGrid();
+    this.playerturn = !this.playerturn;
 
     // Compute the score
     return scoring.score(word, position, direction);

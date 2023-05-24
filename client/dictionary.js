@@ -4,7 +4,7 @@ class Dictionary {
   constructor() {
     // Initialize the status to "not loaded".
     //   - Other options are "loaded" and "unavailable".
-    this.status = 'not loaded';
+    this.status = "not loaded";
 
     // Initialize the dictionary to an empty array.
     this.words = [];
@@ -21,20 +21,26 @@ class Dictionary {
    * false otherwise.
    */
   async loadDictionary() {
-    const response = await fetch('dictionary.json');
-    if (response.ok) {
-      this.words = await response.json();
-      this.status = 'loaded';
-      return true;
-    } else {
-      this.status = 'unavailable';
-      return false;
-    }
+    // TODO #1: Implement this method.
+    await fetch("dictionary.json")
+      .then(async (res) => {
+        if (res.ok) {
+          this.status = "loaded";
+          this.words = await res.json();
+          // console.log("printing dictionary");
+          // console.log(this.words);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        this.status = "unavailable";
+      });
+    return this.status === "loaded";
   }
 
   /** Returns true if the dictionary is loaded; false otherwise. */
   isLoaded() {
-    return this.status === 'loaded';
+    return this.status === "loaded";
   }
 
   /** Returns the words in the dictionary */

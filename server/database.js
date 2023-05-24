@@ -1,18 +1,9 @@
 import { readFile, writeFile } from "fs/promises";
-import { db } from "./mongoDB.js";
 
 /** A class representing a database to store scores */
 class Database {
   constructor() {
     this.path = "scores.json";
-    this.scrabble = { _id: 0, word: [], game: [] };
-    this.create();
-  }
-  async create() {
-    await db.create(this.scrabble);
-  }
-  async save() {
-    await db.update(this.scrabble);
   }
 
   /**
@@ -26,9 +17,14 @@ class Database {
    * @param {number} score the score of the word
    */
   async saveWordScore(name, word, score) {
-    this.scrabble.word.push({ name, word, score });
-    console.log(this.scrabble);
-    await this.save();
+    // TODO #4: Implement this method.
+    let db = await this._read();
+    let wordScore = { name: name, word: word, score: score };
+    if (!db["word"]) {
+      db["word"] = [];
+    }
+    db["word"].push(wordScore);
+    await this._write(db);
   }
 
   /**
@@ -41,9 +37,14 @@ class Database {
    * @param {number} score the score of the game
    */
   async saveGameScore(name, score) {
-    this.scrabble.game.push({ name, score });
-    console.log(this.scrabble);
-    await this.save();
+    // TODO #5: Implement this method.
+    let db = await this._read();
+    if (!db["game"]) {
+      db["game"] = [];
+    }
+    let playerScore = { name: name, score: score };
+    db["game"].push(playerScore);
+    await this._write(db);
   }
 
   /**
@@ -56,9 +57,10 @@ class Database {
    * scores
    */
   async top10WordScores() {
-    const data = this.scrabble;
-    const sorted = data.word.sort((a, b) => b.score - a.score);
-    const top = sorted.slice(0, 10);
+    // TODO #6: Implement this method.
+    let db = await this._read();
+    db["word"].sort((a, b) => b.score - a.score);
+    let top = db["word"].slice(0, 10);
     return top;
   }
 
@@ -71,25 +73,26 @@ class Database {
    * @returns [{name: string, score: number}] returns the top 10 game scores
    */
   async top10GameScores() {
-    const data = this.scrabble;
-    const sorted = data.game.sort((a, b) => b.score - a.score);
-    const top = sorted.slice(0, 10);
+    // TODO #7: Implement this method.
+    let db = await this._read();
+    db["game"].sort((a, b) => b.score - a.score);
+    let top = db["game"].slice(0, 10);
     return top;
   }
 
-  // async _read() {
-  //   try {
-  //     const data = await readFile(this.path, "utf8");
-  //     return JSON.parse(data);
-  //   } catch (error) {
-  //     return { word: [], game: [] };
-  //   }
-  // }
+  async _read() {
+    try {
+      const data = await readFile(this.path, "utf8");
+      return JSON.parse(data);
+    } catch (error) {
+      return { word: [], game: [] };
+    }
+  }
 
-  // // This is a private methods. The # prefix means that they are private.
-  // async _write(data) {
-  //   await writeFile(this.path, JSON.stringify(data), "utf8");
-  // }
+  // This is a private methods. The # prefix means that they are private.
+  async _write(data) {
+    await writeFile(this.path, JSON.stringify(data), "utf8");
+  }
 }
 
 const database = new Database();
